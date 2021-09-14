@@ -28,5 +28,5 @@ def load_breaches(db):
         header = next(r)
         assert (header[0] == 'username')
         for creds in r:
-            create_salted_breach_entry(db, creds[0], creds[1])
+            create_salted_breach_entry(db, creds[0], creds[1], creds[2])
 
