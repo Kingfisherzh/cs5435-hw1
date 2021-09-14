@@ -16,6 +16,7 @@ from app.models.session import (
 )
 from app.scripts.breaches import load_breaches
 from app.util.hash import hash_pbkdf2
+from app.models.breaches import get_breaches
 
 @get('/login')
 def login():
@@ -43,7 +44,16 @@ def do_login(db):
             error = "{} is already taken.".format(username)
         else:
             # TODO
-            passwords = load_breaches(db, username)
+            load_breaches(db)
+            plaintext_breaches, hashed_breaches, salted_breaches = get_breaches(db, username)
+            passwords = list()
+            for pairs in plaintext_breaches:
+                passwords.append(pairs.password)
+            for pairs in hashed_breaches:
+                passwords.append(pairs.hashed_password)
+            for pairs in salted_breaches:
+                passwords.append(pairs.salted_password)
+
             if password in passwords:
                 error = "Password for username{} is breached.".format(username)
             else:
